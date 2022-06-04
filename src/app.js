@@ -1,4 +1,9 @@
 import loadHtml from './source'
+import Sandbox from './sandbox' // 引入沙箱
+
+// 微应用实例
+export const appInstanceMap = new Map()
+
 // 创建微应用
 export default class CreateApp {
     constructor({
@@ -10,6 +15,7 @@ export default class CreateApp {
         this.url = url // url地址
         this.container = container // micro-app元素
         this.status = 'loading'
+        this.sandbox = new Sandbox(name) // 创建沙箱
         loadHtml(this)
     }
 
@@ -49,9 +55,13 @@ export default class CreateApp {
         // 将格式化后的DOM结构插入到容器中
         this.container.appendChild(fragment)
 
+        // 启动沙箱
+        this.sandbox.start()
+
         // 执行js
         this.source.scripts.forEach((info) => {
-            (0, eval)(info.code)
+            // (0, eval)(info.code)
+            (0, eval)(this.sandbox.bindScope(info.code))
         })
 
         // 标记应用为已渲染
@@ -67,6 +77,8 @@ export default class CreateApp {
     this.status = 'unmount'
     // 清空容器
     this.container = null
+    // 关闭沙箱
+    this.sandbox.stop()
     // destory为true，则删除应用
     if (destory) {
       appInstanceMap.delete(this.name)
