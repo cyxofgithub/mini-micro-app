@@ -21,6 +21,7 @@
     <img alt="Vue logo" src="../assets/logo.png">
     <HelloWorld :msg="'基座应用vue@' + version" />
     <div @click="toggleMicroApp" class='toggle-btn'>展示/隐藏</div>
+    <div class='text-color'>我是基座应用的文字</div>
     <!-- 👇嵌入微前端 -->
     <micro-app name='app' url='http://localhost:3001/' v-if='showapp'></micro-app>
   </div>

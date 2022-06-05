@@ -1,6 +1,7 @@
 import {
     fetchSource
 } from './utils'
+import scopedCSS from './scopedcss'
 export default function loadHtml(app) {
     fetchSource(app.url).then((html) => {
         html = html
@@ -89,6 +90,7 @@ function extractSourceDom(parent, app) {
             parent.removeChild(dom)
         } else if (dom instanceof HTMLStyleElement) {
             // 进行样式隔离
+            scopedCSS(dom, app.name)
         }
     }
 }
@@ -113,6 +115,7 @@ export function fetchLinksFromHtml(app, microAppHead, htmlDom) {
             // 拿到css资源后放入style元素并插入到micro-app-head中
             const link2Style = document.createElement('style')
             link2Style.textContent = code
+            scopedCSS(link2Style, app.name)
             microAppHead.appendChild(link2Style)
 
             // 将代码放入缓存，再次渲染时可以从缓存中获取
