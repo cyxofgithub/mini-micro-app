@@ -1,9 +1,12 @@
+import { EventCenterForMicroApp } from './data'
 export default class SandBox {
     active = false // 沙箱是否在运行
     microWindow = {} // // 代理的对象
     injectedKeys = new Set() // 新添加的属性，在卸载时清空
 
-    constructor() {
+    constructor(appName) {
+        // 创建数据通信对象
+        this.microWindow.microApp = new EventCenterForMicroApp(appName)
         this.releaseEffect = effect(this.microWindow)
         this.proxyWindow = new Proxy(this.microWindow, {
             // 取值
@@ -59,7 +62,6 @@ export default class SandBox {
 
     // 停止
     stop() {
-        console.log(999);
         if (this.active) {
             this.active = false
 
@@ -71,6 +73,9 @@ export default class SandBox {
 
             // 卸载全局事件
             this.releaseEffect()
+
+            // 清空所有绑定函数
+             this.microWindow.microApp.clearDataListener()
         }
     }
 
